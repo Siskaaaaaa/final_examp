@@ -14,7 +14,7 @@
 </head>
  
 <body>
-    <header class="px-4 py-2 shadow">
+    <header class="px-4 py-2 shadow bg-gray-900 text-white">
         <div class="flex justify-between">
             <div class="flex items-center">
                 <button data-menu class="p-4 -ml-3 focus:outline-none" type="button">
@@ -55,7 +55,6 @@
                 </button>
  
                 <button data-dropdown class="flex items-center px-3 py-2 focus:outline-none hover:bg-gray-200 hover:rounded-md" type="button" x-data="{ open: false }" @click="open = true" :class="{ 'bg-gray-200 rounded-md': open }">
-                    <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=100&h=100&q=80" alt="Profile" class="h-8 w-8 rounded-full">
  
                     <span class="ml-4 text-sm hidden md:inline-block">Siska</span>
                     <svg class="fill-current w-3 ml-4" viewBox="0 0 407.437 407.437">
@@ -76,62 +75,67 @@
     </header>
  
     <div class="flex flex-row">
-        <div class="flex flex-col w-64 h-screen overflow-y-auto bg-gray-900 border-r rtl:border-r-0 rtl:border-l dark:bg-gray-900 dark:border-gray-700">
-            <div class="sidebar text-center bg-gray-900">
+        <div class="flex flex-col w-64 h-screen overflow-y-auto bg-gray-500 border-r rtl:border-r-0 rtl:border-l dark:bg-gray-900 dark:border-gray-700">
+            <div class="sidebar text-center bg-gray-500">
                 <div class="text-gray-100 text-xl">
                     <div class="p-2.5 mt-1 flex items-center">
-                    <i class="bi bi-box-arrow-in-up-right px-2 py-1 rounded-md bg-green-600"></i>
+                    <i class="bi bi-box-arrow-in-up-right text-white px-2 py-1 rounded-md bg-blue-600"></i>
                     <h1 class="font-bold text-gray-200 text-[15px] ml-3">Admin</h1>
                     </div>
                     <div class="my-2 bg-gray-600 h-[1px]"></div>
-                </div>
+                    </div>
                 <div class="p-2.5 flex items-center rounded-md px-4 duration-300 cursor-pointer bg-gray-700 text-white">
                     <i class="bi bi-search text-sm"></i>
                     <input type="text" placeholder="Search" class="text-[15px] ml-4 w-full bg-transparent focus:outline-none" />
                 </div>
                 <a href="{{ route('admin/home') }}">
                     <div class="p-2.5 mt-3 flex items-center rounded-md px-4 duration-300 cursor-pointer hover:bg-blue-600 text-white">
-                        <i class="bi bi-house-door-fill"></i>
-                        <span class="text-[15px] ml-4 text-gray-200 font-bold">Home</span>
+                    <i class="bi bi-house-door text-green-500"></i>
+                    <span class="text-[15px] ml-4 text-gray-200 font-bold">Home</span>
                     </div>
                 </a>
                 <a href="{{ route('admin.kriteria') }}">
                 <div class="p-2.5 mt-3 flex items-center rounded-md px-4 duration-300 cursor-pointer hover:bg-blue-600 text-white">
-                <i class="bi bi-list-task"></i>
+                <i class="bi bi-list-task text-purple-500"></i>
                 <span class="text-[15px] ml-4 text-gray-200 font-bold">Data Kriteria</span>
                 </div>
                 </a>
 
                 <a href="{{ route('admin.data.alternative') }}">
                     <div class="p-2.5 mt-3 flex items-center rounded-md px-4 duration-300 cursor-pointer hover:bg-blue-600 text-white">
-                        <i class="bi bi-list-task"></i>
-                        <span class="text-[15px] ml-4 text-gray-200 font-bold">Data Alternative</span>
+                    <i class="bi bi-journal-text text-blue-500"></i>
+                    <span class="text-[15px] ml-4 text-gray-200 font-bold">Data Alternative</span>
                     </div>
                 </a>
                 <a href="{{ route('admin.nilai.kriteria') }}">
                     <div class="p-2.5 mt-3 flex items-center rounded-md px-4 duration-300 cursor-pointer hover:bg-blue-600 text-white">
-                        <i class="bi bi-list-task"></i>
-                        <span class="text-[15px] ml-4 text-gray-200 font-bold">Nilai Kriteria</span>
+                    <i class="bi bi-check2-circle text-red-500"></i>
+                    <span class="text-[15px] ml-4 text-gray-200 font-bold">Nilai Kriteria</span>
                     </div>
                 </a>
-                <a href="{{ route('admin.nilai.alternative') }}">
-    <div class="p-2.5 mt-3 flex items-center rounded-md px-4 duration-300 cursor-pointer hover:bg-blue-600 text-white">
-        <i class="bi bi-list-task"></i>
-        <span class="text-[15px] ml-4 text-gray-200 font-bold">Nilai Alternative</span>
-    </div>
-</a>
 
+                <a href="{{ route('admin.nilai.alternative') }}">
+                    <div class="p-2.5 mt-3 flex items-center rounded-md px-4 duration-300 cursor-pointer hover:bg-blue-600 text-white">
+                    <i class="bi bi-bar-chart-fill text-yellow-500"></i>
+                    <span class="text-[15px] ml-4 text-gray-200 font-bold">Nilai Alternative</span>
+                    </div>
+                </a>
+                <a href="{{ route('admin.hasil') }}">
+                    <div class="p-2.5 mt-3 flex items-center rounded-md px-4 duration-300 cursor-pointer hover:bg-blue-600 text-white">
+                    <i class="bi bi-graph-up text-orange-500"></i>
+                    <span class="text-[15px] ml-4 text-gray-200 font-bold">Hasil</span>
+                </div>
+                </a>
                 <a href="{{ route('admin/profile') }}">
                     <div class="p-2.5 mt-3 flex items-center rounded-md px-4 duration-300 cursor-pointer hover:bg-blue-600 text-white">
-                        <i class="bi bi-bookmark-fill"></i>
-                        <span class="text-[15px] ml-4 text-gray-200 font-bold">Profile</span>
-                    </div>
-                </a>
+                    <i class="bi bi-person-circle text-teal-500"></i>
+                    <span class="text-[15px] ml-4 text-gray-200 font-bold">Profile</span>
+                </div>
                 <a href="{{ route('logout') }}">
                     <div class="my-4 bg-gray-600 h-[1px]"></div>
                     <div class="p-2.5 mt-3 flex items-center rounded-md px-4 duration-300 cursor-pointer hover:bg-blue-600 text-white">
-                        <i class="bi bi-box-arrow-in-right"></i>
-                        <span class="text-[15px] ml-4 text-gray-200 font-bold">Logout</span>
+                    <i class="bi bi-box-arrow-left text-red-500"></i>
+                    <span class="text-[15px] ml-4 text-gray-200 font-bold">Logout</span>
                     </div>
                 </a>
             </div>

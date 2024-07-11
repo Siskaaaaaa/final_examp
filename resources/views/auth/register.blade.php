@@ -1,75 +1,127 @@
 <!DOCTYPE html>
 <html lang="en">
- 
+
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="">
-    <meta name="author" content="">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register</title>
-    <link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet" />
-    <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.8.2/dist/alpine.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f3f4f6;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .card {
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            max-width: 350px;
+            margin: auto;
+        }
+
+        .card-header {
+            background-color: #6366f1;
+            color: #ffffff;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        .card-body {
+            padding: 1.5rem;
+        }
+
+        .form-control {
+            border: 1px solid #d1d5db;
+            border-radius: 5px;
+            padding: 0.75rem;
+            margin-bottom: 1rem;
+            width: 100%;
+            font-size: 0.875rem;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #6366f1;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+        }
+
+        .btn {
+            background-color: #6366f1;
+            color: #ffffff;
+            border: none;
+            padding: 0.75rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            width: 100%;
+        }
+
+        .btn:hover {
+            background-color: #4338ca;
+        }
+
+        .link {
+            color: #6366f1;
+            text-decoration: underline;
+            transition: color 0.3s ease;
+        }
+
+        .link:hover {
+            color: #4338ca;
+        }
+    </style>
 </head>
- 
+
 <body>
-    <section class="bg-gray-50 dark:bg-gray-900">
-        <div class="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
-            <div class="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white">
-                Register
+    <div class="min-h-screen flex items-center justify-center">
+        <div class="card">
+            <div class="card-header">
+                <h2 class="text-2xl font-extrabold">Register</h2>
             </div>
-            <div class="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
-                <div class="p-6 space-y-4 md:space-y-6 sm:p-8">
-                    <h1 class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
-                        Create and account
-                    </h1>
-                    <form action="{{ route('register.save') }}" method="POST" class="space-y-4 md:space-y-6">
-                        @csrf
-                        <div>
-                            <label for="name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Your name</label>
-                            <input type="text" name="name" id="name" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="name" required="">
-                            @error('name')
-                            <span class="text-red-600">{{ $message }}</span>
-                            @enderror
-                        </div>
-                        <div>
-                            <label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Your email</label>
-                            <input type="email" name="email" id="email" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="name@company.com" required="">
-                            @error('email')
-                            <span class="text-red-600">{{ $message }}</span>
-                            @enderror
-                        </div>
-                        <div>
-                            <label for="password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Password</label>
-                            <input type="password" name="password" id="password" placeholder="••••••••" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required="">
-                            @error('password')
-                            <span class="text-red-600">{{ $message }}</span>
-                            @enderror
-                        </div>
-                        <div>
-                            <label for="confirm-password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Confirm password</label>
-                            <input type="confirm-password" name="password_confirmation" id="password_confirmation" placeholder="••••••••" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required="">
-                            @error('password_confirmation')
-                            <span class="text-red-600">{{ $message }}</span>
-                            @enderror
-                        </div>
-                        <div class="flex items-start">
-                            <div class="flex items-center h-5">
-                                <input id="terms" aria-describedby="terms" type="checkbox" class="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-primary-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-primary-600 dark:ring-offset-gray-800" required="">
-                            </div>
-                            <div class="ml-3 text-sm">
-                                <label for="terms" class="font-light text-gray-500 dark:text-gray-300">I accept the <a class="font-medium text-primary-600 hover:underline dark:text-primary-500" href="#">Terms and Conditions</a></label>
-                            </div>
-                        </div>
-                        <button type="submit" class="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Create an account</button>
-                        <p class="text-sm font-light text-gray-500 dark:text-gray-400">
-                            Already have an account? <a href="{{ route('login') }}" class="font-medium text-primary-600 hover:underline dark:text-primary-500">Login here</a>
-                        </p>
-                    </form>
+            <div class="card-body">
+                <form action="{{ route('register.save') }}" method="POST" class="space-y-4">
+                    @csrf
+                    <div>
+                        <label for="name" class="block text-sm font-medium text-gray-700">Your name</label>
+                        <input type="text" name="name" id="name" autocomplete="name" required class="form-control">
+                        @error('name')
+                        <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+                    <div>
+                        <label for="email" class="block text-sm font-medium text-gray-700">Your email</label>
+                        <input type="email" name="email" id="email" autocomplete="email" required class="form-control">
+                        @error('email')
+                        <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+                    <div>
+                        <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
+                        <input type="password" name="password" id="password" autocomplete="new-password" required class="form-control">
+                        @error('password')
+                        <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+                    <div>
+                        <label for="password_confirmation" class="block text-sm font-medium text-gray-700">Confirm password</label>
+                        <input type="password" name="password_confirmation" id="password_confirmation" autocomplete="new-password" required class="form-control">
+                    </div>
+                    <div class="flex items-center mt-4">
+                        <input type="checkbox" id="terms" name="terms" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                        <label for="terms" class="ml-2 block text-sm text-gray-900">I accept the <a href="#" class="link">Terms and Conditions</a></label>
+                    </div>
+                    <div>
+                        <button type="submit" class="btn mt-4">Create an account</button>
+                    </div>
+                </form>
+                <div class="text-sm text-center mt-4">
+                    <p class="text-gray-600">Already have an account? <a href="{{ route('login') }}" class="link">Login here</a></p>
                 </div>
             </div>
         </div>
-    </section>
+    </div>
 </body>
- 
+
 </html>

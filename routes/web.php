@@ -6,22 +6,22 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\NilaiKriteriaController;
 use App\Http\Controllers\TeamController;
 use App\Http\Controllers\ContactController;
-use App\Http\Controllers\NilaiKriteriaController;
 use App\Http\Controllers\DataAlternativeController;
-use App\Http\Controllers\AHPController;
 use App\Http\Controllers\KriteriaController;
+use App\Http\Controllers\HasilController;
 use App\Http\Controllers\NilaiAlternativeController;
 
 
-
+Route::middleware('auth')->group(function () {
+    // Rute-rute yang memerlukan autentikasi di sini, misalnya:
+    Route::get('/perhitungan-ahp', [PerhitunganController::class, 'index']);
+});
 Route::get('/about', [UserController::class, 'about'])->name('about');
 Route::get('/contact', [ContactController::class, 'index'])->name('contact');
 Route::get('/', function () {return view('home');})->name('home');
-
-Route::get('/ahp', [AHPController::class, 'index'])->name('ahp');
-
 
 Route::post('/contacts/store', [ContactController::class, 'store'])->name('contacts.store');
 
@@ -63,6 +63,10 @@ Route::middleware(['auth', 'user-access:admin'])->group(function () {
     Route::get('/admin/nilai/alternative', [NilaiAlternativeController::class, 'nilaiAlternative'])->name('admin.nilai.alternative');
     Route::get('/nilai-alternative', [NilaiAlternativeController::class, 'nilaiAlternative'])->name('nilai.alternative');
     Route::post('/nilai-alternative/store', [NilaiAlternativeController::class, 'storePerbandingan'])->name('nilai.alternative.storePerbandingan');
+    Route::get('/nilai-kriteria', [NilaiKriteriaController::class, 'index'])->name('nilai.kriteria.index');
+    Route::post('/nilai-kriteria/store-perbandingan', [NilaiKriteriaController::class, 'storePerbandingan'])->name('nilai.kriteria.storePerbandingan');
+    Route::post('/store-perbandingan', [NilaiKriteriaController::class, 'storePerbandingan'])->name('nilai.kriteria.storePerbandingan');
+    Route::post('/nilai-kriteria/check-consistency', [NilaiKriteriaController::class, 'checkConsistency'])->name('nilai.kriteria.checkConsistency');
 
         //ROUTE data KRITERIA//
         Route::get('/kriteria', [KriteriaController::class, 'index'])->name('kriteria.index');
@@ -73,6 +77,7 @@ Route::middleware(['auth', 'user-access:admin'])->group(function () {
         Route::post('/admin/data/kriteria', [KriteriaController::class, 'store'])->name('admin.data.kriteria.store');
         Route::get('/admin/data/kriteria', [KriteriaController::class, 'index'])->name('admin.data.kriteria');
         Route::put('kriteria/{kriteria}', [KriteriaController::class, 'update'])->name('admin.data.kriteria.update');
+        Route::post('/simpan-perbandingan-kriteria', [PerbandinganKriteriaController::class, 'simpanPerbandingan'])->name('simpan.perbandingan.kriteria');
 
 
     //ROUTE DATA ALTERNATIVE//
@@ -85,4 +90,12 @@ Route::middleware(['auth', 'user-access:admin'])->group(function () {
         Route::put('/data/alternative/{id}', [DataAlternativeController::class, 'update'])->name('data.alternative.update');
         Route::delete('/data/alternative/{id}', [DataAlternativeController::class, 'destroy'])->name('data.alternative.destroy');
     });
+// Route untuk halaman hasil
+Route::get('/admin/hasil', [HasilController::class, 'showHasil'])->name('admin.hasil');
+Route::get('/hasil', [HasilController::class, 'showHasil']);
+
+
+//Perbandingan Kriteria//
+Route::get('/admin/perbandingan/kriteria', [PerbandinganKriteriaController::class, 'index'])->name('admin.perbandingan.kriteria');
+Route::get('/perbandingankriteria', 'PerbandinganKriteriaController@index')->name('perbandingan.kriteria.index');
 });

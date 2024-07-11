@@ -16,24 +16,28 @@
         width: 100%;
         border-collapse: collapse;
         margin-top: 1.5rem;
+        font-size: 14px; /* Ukuran font lebih kecil */
     }
 
     .perbandingan-table th,
     .perbandingan-table td {
-        padding: 0.75rem;
+        padding: 0.5rem; /* Padding lebih sedikit */
         text-align: center;
         vertical-align: middle;
         border: 1px solid #ddd;
     }
 
     .perbandingan-container {
-        background-color: #fff;
-        border: 1px solid #ccc;
-        padding: 0.5rem;
-        margin-top: 1.5rem;
-        border-radius: 8px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    }
+    background-color: #fff;
+    border: 1px solid #ccc;
+    padding: 0.5rem;
+    margin-top: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    position: sticky; /* Menjadikan container tetap di atas saat digulir */
+    top: 0; /* Jarak dari atas halaman */
+    z-index: 100; /* Untuk menempatkan di atas elemen lain */
+}
 
     .btn-container {
         margin-top: 1.5rem;
@@ -122,10 +126,6 @@
     <div class="table-responsive">
         <table class="table table-bordered">
             <thead class="thead-dark">
-                <tr>
-                    <th>Kriteria</th>
-                    <th>Nilai</th>
-                </tr>
             </thead>
             <tbody>
                 @foreach($nilai_kriteria as $nilai)
@@ -180,11 +180,17 @@
 
     <div class="btn-container">
         <button id="add-perbandingan" type="button" class="btn add-button">+</button>
-        <form id="form-perbandingan" action="{{ route('nilai.kriteria.storePerbandingan') }}" method="POST">
-            @csrf
-            <button type="submit" class="btn submit-button">Simpan Perbandingan</button>
-        </form>
-        <button id="check-consistency" type="button" class="btn consistency-button">Cek Konsistensi</button>
+                <button id="check-consistency" type="button" class="btn consistency-button">Cek Konsistensi</button>
+                <<form id="form-perbandingan" action="{{ route('nilai.kriteria.storePerbandingan') }}" method="POST">
+    @csrf
+    <!-- Isi form -->
+    <button type="submit" class="btn submit-button">Simpan Perbandingan</button>
+</form>
+
+    </div>
+
+    <!-- Tempatkan hasil konsistensi di atas form -->
+    <div id="hasil-konsistensi" class="mt-5">
     </div>
 </div>
 
@@ -224,9 +230,102 @@
             $('#perbandingan-container').append(newRow);
         });
 
-        $('#check-consistency').click(function() {
-            alert('Fungsi untuk mengecek konsistensi belum diimplementasikan.');
-            // Implementasi logika untuk cek konsistensi bisa ditambahkan di sini
+        $('#check-consistency').click(function () {
+            // Ambil data perbandingan dari form
+            var perbandinganData = [];
+            $('#perbandingan-container tr').each(function () {
+                var kriteria1 = $(this).find('select[name^="perbandingan["][name$="[kriteria1]"]').val();
+                var nilai = parseInt($(this).find('select[name^="perbandingan["][name$="[nilai]"]').val());
+                var kriteria2 = $(this).find('select[name^="perbandingan["][name$="[kriteria2]"]').val();
+                perbandinganData.push({ kriteria1: kriteria1, nilai: nilai, kriteria2: kriteria2 });
+            });
+
+            // Validasi data perbandingan
+            if (perbandinganData.length < 1) {
+                alert('Harap masukkan setidaknya satu perbandingan kriteria.');
+                return;
+            }
+
+            // Hitung matriks perbandingan
+            var matriksPerbandingan = {};
+            for (var i = 0; i < perbandinganData.length; i++) {
+                var kriteria1 = perbandinganData[i].kriteria1;
+                var nilai = perbandinganData[i].nilai;
+                var kriteria2 = perbandinganData[i].kriteria2;
+
+                if (!matriksPerbandingan[kriteria1]) {
+                    matriksPerbandingan[kriteria1] = {};
+                }
+
+                if (!matriksPerbandingan[kriteria2]) {
+                    matriksPerbandingan[kriteria2] = {};
+                }
+
+                matriksPerbandingan[kriteria1][kriteria2] = nilai;
+                matriksPerbandingan[kriteria2][kriteria1] = 1 / nilai;
+            }
+
+            // Hitung total baris
+            var totalBaris = {};
+            for (var kriteria1 in matriksPerbandingan) {
+                totalBaris[kriteria1] = 0;
+                for (var kriteria2 in matriksPerbandingan[kriteria1]) {
+                    totalBaris[kriteria1] += matriksPerbandingan[kriteria1][kriteria2];
+                }
+            }
+
+            // Hitung matriks normalisasi
+            var matriksNormalisasi = {};
+            for (var kriteria1 in matriksPerbandingan) {
+                matriksNormalisasi[kriteria1] = {};
+                for (var kriteria2 in matriksPerbandingan[kriteria1]) {
+                    matriksNormalisasi[kriteria1][kriteria2] = matriksPerbandingan[kriteria1][kriteria2] / totalBaris[kriteria1];
+                }
+            }
+
+            // Hitung vektor bobot (eigen vector)
+            var vektorBobot = {};
+            for (var kriteria1 in matriksNormalisasi) {
+                vektorBobot[kriteria1] = 0;
+                for (var kriteria2 in matriksNormalisasi[kriteria1]) {
+                    vektorBobot[kriteria1] += matriksNormalisasi[kriteria1][kriteria2];
+                }
+                vektorBobot[kriteria1] /= Object.keys(matriksNormalisasi).length;
+            }
+
+            // Hitung konsistensi
+            var CI = 0;
+            for (var kriteria1 in matriksNormalisasi) {
+                var sum = 0;
+                for (var kriteria2 in matriksNormalisasi[kriteria1]) {
+                    sum += matriksNormalisasi[kriteria1][kriteria2] * vektorBobot[kriteria2];
+                }
+                CI += sum / vektorBobot[kriteria1];
+            }
+
+            // Hitung Consistency Index (CI) dan Consistency Ratio (CR)
+            var n = Object.keys(matriksNormalisasi).length;
+            CI = (CI - n) / (n - 1);
+            var RI = [0, 0, 0.58, 0.9, 1.12, 1.24, 1.32, 1.41, 1.45, 1.49]; // Random Index (RI) untuk n = 10
+            var CR = CI / RI[n];
+
+            // Validasi hasil konsistensi
+            if (isNaN(CI) || isNaN(CR)) {
+                alert('Terjadi kesalahan dalam perhitungan. Harap periksa kembali data perbandingan kriteria.');
+                return;
+            }
+
+            // Tampilkan hasil konsistensi
+            var message = "<strong>Hasil Konsistensi:</strong><br>";
+            if (CR < 0.1) {
+                message += "<strong>Konsistensi:</strong> KONSISTEN<br>";
+            } else {
+                message += "<strong>Consistency Index (CI):</strong> " + CI.toFixed(4) + "<br>";
+                message += "<strong>Consistency Ratio (CR):</strong> " + CR.toFixed(4) + "<br>";
+            }
+
+            // Tampilkan hasil di atas form
+            $('#hasil-konsistensi').html('<div class="alert alert-info">' + message + '</div>');
         });
     });
 </script>

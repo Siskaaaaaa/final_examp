@@ -16,15 +16,17 @@
         width: 100%;
         border-collapse: collapse;
         margin-top: 1.5rem;
+        font-size: 14px; /* Ukuran font lebih kecil */
     }
 
     .perbandingan-table th,
     .perbandingan-table td {
-        padding: 0.75rem;
+        padding: 0.5rem; /* Padding lebih sedikit */
         text-align: center;
         vertical-align: middle;
         border: 1px solid #ddd;
     }
+
 
     .perbandingan-container {
         background-color: #fff;
@@ -66,6 +68,16 @@
 
     .btn-container .submit-button:hover {
         background-color: #0056b3;
+    }
+
+    .btn-container .check-button {
+        background-color: #ffc107;
+        color: white;
+        border: none;
+    }
+
+    .btn-container .check-button:hover {
+        background-color: #e0a800;
     }
 
     .alert {
@@ -111,15 +123,11 @@
     <div class="table-responsive">
         <table class="table table-bordered">
             <thead class="thead-dark">
-                <tr>
-                    <th>Alternative</th>
-                    <th>Nilai</th>
-                </tr>
             </thead>
             <tbody>
-                @foreach($nilai_alternative as $nilai)
+                @foreach($nilai_alternatives as $nilai)
                 <tr>
-                    <td>{{ $alternative[$nilai->kode_alternative] }}</td>
+                    <td>{{ $alternatives[$nilai->kode_alternative] }}</td>
                     <td>{{ $nilai->nilai }}</td>
                 </tr>
                 @endforeach
@@ -129,50 +137,56 @@
 
     <!-- Form untuk memasukkan perbandingan alternative -->
     <div class="perbandingan-container">
-        <table class="table table-bordered perbandingan-table">
-            <thead class="thead-dark">
-                <tr>
-                    <th>Alternative 1</th>
-                    <th>Nilai Perbandingan</th>
-                    <th>Alternative 2</th>
-                </tr>
-            </thead>
-            <tbody id="perbandingan-container">
-                <tr>
-                    <td>
-                        <select name="perbandingan[0][alternative1]" class="form-control" required>
-                            @foreach($alternative as $kode => $nama)
-                            <option value="{{ $kode }}">{{ $nama }}</option>
-                            @endforeach
-                        </select>
-                    </td>
-                    <td>
-                        <select name="perbandingan[0][nilai]" class="form-control" required>
-                            <option value="9">9 Mutlak Lebih Penting</option>
-                            <option value="7">7 Sangat Lebih Penting</option>
-                            <option value="5">5 Lebih Penting</option>
-                            <option value="3">3 Cukup Penting</option>
-                            <option value="1">1 Sama Penting</option>
-                        </select>
-                    </td>
-                    <td>
-                        <select name="perbandingan[0][alternative2]" class="form-control" required>
-                            @foreach($alternative as $kode => $nama)
-                            <option value="{{ $kode }}">{{ $nama }}</option>
-                            @endforeach
-                        </select>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+        <form action="{{ route('nilai.alternative.storePerbandingan') }}" method="POST" id="perbandingan-form">
+            @csrf
+            <table class="table table-bordered perbandingan-table">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>Alternative 1</th>
+                        <th>Nilai Perbandingan</th>
+                        <th>Alternative 2</th>
+                    </tr>
+                </thead>
+                <tbody id="perbandingan-container">
+                    <tr>
+                        <td>
+                            <select name="perbandingan[0][alternative1]" class="form-control" required>
+                                @foreach($alternatives as $kode => $nama)
+                                <option value="{{ $kode }}">{{ $nama }}</option>
+                                @endforeach
+                            </select>
+                        </td>
+                        <td>
+                            <select name="perbandingan[0][nilai]" class="form-control" required>
+                                <option value="9">9 Mutlak Lebih Penting</option>
+                                <option value="7">7 Sangat Lebih Penting</option>
+                                <option value="5">5 Lebih Penting</option>
+                                <option value="3">3 Cukup Penting</option>
+                                <option value="1">1 Sama Penting</option>
+                            </select>
+                        </td>
+                        <td>
+                            <select name="perbandingan[0][alternative2]" class="form-control" required>
+                                @foreach($alternatives as $kode => $nama)
+                                <option value="{{ $kode }}">{{ $nama }}</option>
+                                @endforeach
+                            </select>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="btn-container">
+                <button id="add-perbandingan" type="button" class="btn add-button">+</button>
+                <button type="submit" class="btn submit-button">Simpan Perbandingan</button>
+                <button id="check-consistency" type="button" class="btn check-button">Cek Konsistensi</button>
+            </div>
+        </form>
     </div>
 
-    <div class="btn-container">
-        <button id="add-perbandingan" type="button" class="btn add-button">+</button>
-        <form id="form-perbandingan" action="{{ route('nilai.alternative.storePerbandingan') }}" method="POST">
-            @csrf
-            <button type="submit" class="btn submit-button">Simpan Perbandingan</button>
-        </form>
+    <!-- Hasil Nilai Alternative -->
+    <div id="hasil-nilai-alternative" class="mt-5">
+        <!-- Hasil konsistensi akan ditampilkan di sini -->
     </div>
 </div>
 
@@ -180,14 +194,14 @@
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 <script>
-    $(document).ready(function () {
+     $(document).ready(function () {
         $('#add-perbandingan').click(function () {
-            var index = $('#perbandingan-container tr').length; // Menghitung jumlah row
+            var index = $('#perbandingan-container tr').length;
             var newRow =
                 `<tr>
                     <td>
                         <select name="perbandingan[${index}][alternative1]" class="form-control" required>
-                            @foreach($alternative as $kode => $nama)
+                            @foreach($alternatives as $kode => $nama)
                             <option value="{{ $kode }}">{{ $nama }}</option>
                             @endforeach
                         </select>
@@ -203,13 +217,92 @@
                     </td>
                     <td>
                         <select name="perbandingan[${index}][alternative2]" class="form-control" required>
-                            @foreach($alternative as $kode => $nama)
+                            @foreach($alternatives as $kode => $nama)
                             <option value="{{ $kode }}">{{ $nama }}</option>
                             @endforeach
                         </select>
                     </td>
                 </tr>`;
             $('#perbandingan-container').append(newRow);
+        });
+
+        $('#check-consistency').click(function () {
+            var perbandinganData = [];
+            $('#perbandingan-container tr').each(function () {
+                var alternative1 = $(this).find('select[name^="perbandingan["][name$="[alternative1]"]').val();
+                var nilai = parseInt($(this).find('select[name^="perbandingan["][name$="[nilai]"]').val());
+                var alternative2 = $(this).find('select[name^="perbandingan["][name$="[alternative2]"]').val();
+                
+                // Validasi agar tidak ada pembandingan dengan alternatif yang sama
+                if (alternative1 === alternative2) {
+                    alert('Perbandingan antara alternatif yang sama tidak diperbolehkan.');
+                    perbandinganData = [];
+                    return false; // Menghentikan iterasi jika ditemukan kesalahan
+                }
+                
+                perbandinganData.push({ alternative1: alternative1, nilai: nilai, alternative2: alternative2 });
+            });
+
+            // Validasi data perbandingan
+            if (perbandinganData.length < 1) {
+                alert('Harap masukkan setidaknya satu perbandingan alternative.');
+                return;
+            }
+
+            // Hitung nilai alternative berdasarkan perbandingan
+            var nilaiAlternatif = {};
+            perbandinganData.forEach(function (item) {
+                var alternative1 = item.alternative1;
+                var nilai = item.nilai;
+                var alternative2 = item.alternative2;
+
+                // Pastikan alternative1 dan alternative2 sudah ada dalam nilaiAlternatif
+                if (!nilaiAlternatif[alternative1]) {
+                    nilaiAlternatif[alternative1] = {};
+                }
+                if (!nilaiAlternatif[alternative1][alternative2]) {
+                    nilaiAlternatif[alternative1][alternative2] = 0;
+                }
+                nilaiAlternatif[alternative1][alternative2] += nilai;
+
+                // Jika alternative2 belum ada, inisialisasikan dengan 0
+                if (!nilaiAlternatif[alternative2]) {
+                    nilaiAlternatif[alternative2] = {};
+                }
+                if (!nilaiAlternatif[alternative2][alternative1]) {
+                    nilaiAlternatif[alternative2][alternative1] = 0;
+                }
+                nilaiAlternatif[alternative2][alternative1] += 1 / nilai;
+            });
+
+            // Hitung jumlah total perbandingan untuk setiap alternative
+            var totalPerbandingan = {};
+            Object.keys(nilaiAlternatif).forEach(function (alternative1) {
+                totalPerbandingan[alternative1] = 0;
+                Object.keys(nilaiAlternatif[alternative1]).forEach(function (alternative2) {
+                    totalPerbandingan[alternative1] += nilaiAlternatif[alternative1][alternative2];
+                });
+            });
+
+            // Hitung nilai alternative akhir
+            var nilaiAkhirAlternative = {};
+            Object.keys(nilaiAlternatif).forEach(function (alternative1) {
+                nilaiAkhirAlternative[alternative1] = 0;
+                Object.keys(nilaiAlternatif[alternative1]).forEach(function (alternative2) {
+                    nilaiAkhirAlternative[alternative1] += nilaiAlternatif[alternative1][alternative2] / totalPerbandingan[alternative1];
+                });
+            });
+
+            // Tampilkan hasil konsistensi
+            var konsistensi = true;
+            Object.keys(nilaiAkhirAlternative).forEach(function (alternative) {
+                if (nilaiAkhirAlternative[alternative] < 0.1 || nilaiAkhirAlternative[alternative] > 10) {
+                    konsistensi = false;
+                }
+            });
+
+            var hasilKonsistensi = konsistensi ? 'Konsisten' : 'Tidak Konsisten';
+            $('#hasil-nilai-alternative').html('<div class="alert alert-info mt-4">Hasil Konsistensi: ' + hasilKonsistensi + '</div>');
         });
     });
 </script>
